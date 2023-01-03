@@ -30,6 +30,12 @@ static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
+
+// #GW - added sleep_list to timer struct
+extern struct list sleep_list;
+void thread_Sleep(void);
+void wakeup(void);
+
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
 void
@@ -86,6 +92,7 @@ timer_elapsed (int64_t then)
 
 /* Sleeps for approximately TICKS timer ticks.  Interrupts must
    be turned on. */
+
 void
 timer_sleep (int64_t ticks) 
 {
@@ -93,8 +100,8 @@ timer_sleep (int64_t ticks)
 
   ASSERT (intr_get_level () == INTR_ON);
   while (timer_elapsed (start) < ticks) 
-    // thread_yield ();
-    thread_Slee
+  //    thread_yield ();
+        thread_Sleep();
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
@@ -173,7 +180,28 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+  // #GW 2018.11.27
+  wakeup();
 }
+
+// #GW 2018.11.27 wakeup function for timer_interrupt 
+void
+wakeup (void) 
+{
+  struct list_elem *e;
+
+  for (e = list_begin (&sleep_list); e != list_end (&sleep_list);
+       e = list_next (e))
+    {
+      struct thread *t = list_entry (e, struct thread, elem);
+      if (--t->sleep_ticks == 0)
+        {
+          list_remove (e);
+          thread_unblock (t);
+        }
+    }
+}
+
 
 /* Returns true if LOOPS iterations waits for more than one timer
    tick, otherwise false. */

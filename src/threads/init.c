@@ -43,11 +43,15 @@ uint32_t *init_page_dir;
 
 #ifdef FILESYS
 /* -f: Format the file system? */
-static bool format_filesys;ram
+static bool format_filesys;
 
 /* -filesys, -scratch, -swap: Names of block devices to use,
    overriding the defaults. */
-static const char *filesys_bdev_name;
+// trying to fix
+// static const char *filesys_bdev_name;
+// #GW
+const char *filesys_bdev_name;
+
 static const char *scratch_bdev_name;
 #ifdef VM
 static const char *swap_bdev_name;
@@ -64,7 +68,7 @@ static char **read_command_line (void);
 static char **parse_options (char **argv);
 static void run_actions (char **argv);
 static void usage (void);
-
+int compare(char* word,char* command);
 
 char* TypeOnShell(void);
 
