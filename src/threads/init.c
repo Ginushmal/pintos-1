@@ -75,6 +75,9 @@ char* TypeOnShell(void);
 
 char* TypeOnShell(void);
 
+
+char* TypeOnShell(void);
+
 #ifdef FILESYS
 static void locate_block_devices (void);
 static void locate_block_device (enum block_type, const char *name);
