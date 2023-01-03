@@ -73,8 +73,6 @@ static void *alloc_frame (struct thread *, size_t size);
 static void schedule (void);
 void thread_schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
-void thread_sleep (int64_t wakeup_tick);
-void sleep (int64_t ticks);
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -320,52 +318,6 @@ thread_yield (void)
   schedule ();
   intr_set_level (old_level);
 }
-
-/*new thread sleep function i implement */
-// void
-// thread_sleep (int64_t wakeup_tick) 
-// {
-//   struct thread *cur = thread_current ();
-//   enum intr_level old_level;
-  
-//   ASSERT (is_thread(cur));
-
-//   old_level = intr_disable ();
-//   ASSERT (cur->status == THREAD_RUNNING)
-//   if (cur != idle_thread) 
-//     list_push_back (&sleep_list, &cur->elem);
-//   cur->status = THREAD_SLEEPING;
-//   cur->wake_time =timer_ticks()+wakeup_tick;
-//   schedule ();
-//   intr_set_level (old_level);
-// }
-
-// #GW 2018.11.28 thread sleep
-void
-sleep (int64_t ticks)
-{
-  struct thread *cur = thread_current ();
-  enum intr_level old_level;
-
-  ASSERT (ticks >= 0);
-  if (ticks == 0)
-    return;
-
-  old_level = intr_disable ();
-  cur->sleep_ticks = ticks;
-  list_push_back (&sleep_list, &cur->elem);
-  thread_block ();
-  intr_set_level (old_level);
-}
-
-
-
-
-
-
-
-
-
 
 /* Invoke function 'func' on all threads, passing along 'aux'.
    This function must be called with interrupts off. */
