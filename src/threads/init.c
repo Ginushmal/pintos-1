@@ -43,7 +43,7 @@ uint32_t *init_page_dir;
 
 #ifdef FILESYS
 /* -f: Format the file system? */
-static bool format_filesys;
+static bool format_filesys;ram
 
 /* -filesys, -scratch, -swap: Names of block devices to use,
    overriding the defaults. */
@@ -69,6 +69,9 @@ static char **parse_options (char **argv);
 static void run_actions (char **argv);
 static void usage (void);
 int compare(char* word,char* command);
+
+char* TypeOnShell(void);
+
 
 char* TypeOnShell(void);
 
