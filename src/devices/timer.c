@@ -31,10 +31,6 @@ static void real_time_sleep (int64_t num, int32_t denom);
 static void real_time_delay (int64_t num, int32_t denom);
 
 
-// #GW - added sleep_list to timer struct
-extern struct list sleep_list;
-void thread_Sleep(void);
-void wakeup(void);
 
 /* Sets up the timer to interrupt TIMER_FREQ times per second,
    and registers the corresponding interrupt. */
@@ -180,26 +176,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
-  // #GW 2018.11.27
-  wakeup();
-}
 
-// #GW 2018.11.27 wakeup function for timer_interrupt 
-void
-wakeup (void) 
-{
-  struct list_elem *e;
-
-  for (e = list_begin (&sleep_list); e != list_end (&sleep_list);
-       e = list_next (e))
-    {
-      struct thread *t = list_entry (e, struct thread, elem);
-      if (--t->sleep_ticks == 0)
-        {
-          list_remove (e);
-          thread_unblock (t);
-        }
-    }
 }
 
 
